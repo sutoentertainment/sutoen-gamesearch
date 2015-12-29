@@ -1,6 +1,5 @@
 package com.sutoen.g2adeal;
 
-import android.Manifest;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
@@ -13,8 +12,6 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         super(Application.class);
     }
 
-    private static final boolean DEBUG = true;
-
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -23,13 +20,5 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-    }
-
-
-    public void test_InternetPermission () {
-        final String PKG = "com.sutoen.snowball";
-        final String ACTIVITY =  PKG + ".MainActivity";
-        final String PERMISSION = Manifest.permission.INTERNET;
-        assertActivityRequiresPermission(PKG, ACTIVITY, PERMISSION);
     }
 }

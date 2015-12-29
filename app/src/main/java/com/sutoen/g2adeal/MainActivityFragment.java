@@ -1,10 +1,17 @@
 package com.sutoen.g2adeal;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -12,13 +19,62 @@ import android.view.ViewGroup;
 public class MainActivityFragment extends Fragment {
 
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    private RecyclerView m_dealsRecyclerView;
+    private LinearLayoutManager m_LinearLayoutManager;
+
+    /** The CardView widget. */
+    //@VisibleForTesting
+    CardView mCardView;
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @return A new instance of fragment NotificationFragment.
+     */
+    public static MainActivityFragment newInstance() {
+        MainActivityFragment fragment = new MainActivityFragment();
+        fragment.setRetainInstance(true);
+        return fragment;
+    }
 
     public MainActivityFragment() {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        m_dealsRecyclerView = (RecyclerView) rootView.findViewById(R.id.deals_recycler_view);
+        m_dealsRecyclerView.setHasFixedSize(true);
+        m_LinearLayoutManager = new LinearLayoutManager(getContext());
+        m_LinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        m_dealsRecyclerView.setLayoutManager(m_LinearLayoutManager);
+        DealAdapter dealAdapter = new DealAdapter(createDealsList(30));
+        m_dealsRecyclerView.setAdapter(dealAdapter);
+        return rootView;
+    }
+
+
+    //create Deals List to Test
+    private List<Deal> createDealsList(int size) {
+
+        List<Deal> result = new ArrayList<Deal>();
+        for (int i=1; i <= size; i++) {
+            Deal currentDeal = new Deal();
+            currentDeal.setPicSource(android.R.drawable.sym_def_app_icon);
+            currentDeal.setTitle("Title " + i);;
+            currentDeal.setPrice(i);
+            currentDeal.setPriceUnit("$");
+            result.add(currentDeal);
+        }
+
+        return result;
     }
 }
