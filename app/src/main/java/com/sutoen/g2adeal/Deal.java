@@ -10,6 +10,16 @@ public class Deal {
     private float m_price;
     private String m_priceUnit;
 
+    public String getBuyButtonText() {
+        return m_buyButtonText;
+    }
+
+    public void setBuyButtonText(String m_buyButtonText) {
+        this.m_buyButtonText = m_buyButtonText;
+    }
+
+    private String m_buyButtonText;
+
     public int getPicSource() {
         return m_picSource;
     }

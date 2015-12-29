@@ -39,7 +39,7 @@ public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder
         holder.icFav.setImageResource(currentDeal.getIcFavSource());
         holder.title.setText(currentDeal.getTitle());
         holder.price.setText(currentDeal.getPrice() + " " + currentDeal.getPriceUnit());
-        holder.button.setText("Buy now");
+        holder.button.setText(currentDeal.getBuyButtonText());
     }
 
 

@@ -62,13 +62,15 @@ public class MainActivityFragment extends Fragment {
     }
 
 
-    //create Deals List to Test
+    //create Deals List to test out the layout
     private List<Deal> createDealsList(int size) {
 
         List<Deal> result = new ArrayList<Deal>();
         for (int i=1; i <= size; i++) {
             Deal currentDeal = new Deal();
             currentDeal.setPicSource(android.R.drawable.sym_def_app_icon);
+            currentDeal.setIcFavSource(android.R.drawable.btn_star);
+            currentDeal.setBuyButtonText(getString(R.string.buy_button_text));
             currentDeal.setTitle("Title " + i);;
             currentDeal.setPrice(i);
             currentDeal.setPriceUnit("$");
