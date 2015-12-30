@@ -9,9 +9,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -19,8 +21,15 @@ import java.util.List;
 public class MainActivityFragment extends Fragment {
 
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+
     private RecyclerView m_dealsRecyclerView;
     private LinearLayoutManager m_linearLayoutManager;
+    private TextView m_emptyTextView;
+
+    private List<Deal> m_dealsList;
+
+
+    protected Handler m_handler;
 
     /** The CardView widget. */
     //@VisibleForTesting
@@ -56,8 +65,23 @@ public class MainActivityFragment extends Fragment {
         m_linearLayoutManager = new LinearLayoutManager(getContext());
         m_linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         m_dealsRecyclerView.setLayoutManager(m_linearLayoutManager);
-        DealAdapter dealAdapter = new DealAdapter(createDealsList(30));
+        m_emptyTextView = (TextView) rootView.findViewById(R.id.empty_textview);
+        m_dealsList = new ArrayList<>();
+        m_dealsList = createDealsList(50);
+        DealAdapter dealAdapter = new DealAdapter(m_dealsList);
         m_dealsRecyclerView.setAdapter(dealAdapter);
+
+
+        if (m_dealsList.isEmpty()) {
+            m_dealsRecyclerView.setVisibility(View.GONE);
+            m_emptyTextView.setVisibility(View.VISIBLE);
+
+        } else {
+            m_dealsRecyclerView.setVisibility(View.VISIBLE);
+            m_emptyTextView.setVisibility(View.GONE);
+        }
+
+
         return rootView;
     }
 
