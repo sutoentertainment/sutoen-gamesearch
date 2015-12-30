@@ -1,6 +1,7 @@
 package com.sutoen.g2adeal;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -13,7 +14,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -23,6 +23,7 @@ public class MainActivityFragment extends Fragment {
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
     private RecyclerView m_dealsRecyclerView;
+    private DealAdapter m_dealAdapter;
     private LinearLayoutManager m_linearLayoutManager;
     private TextView m_emptyTextView;
 
@@ -67,9 +68,9 @@ public class MainActivityFragment extends Fragment {
         m_dealsRecyclerView.setLayoutManager(m_linearLayoutManager);
         m_emptyTextView = (TextView) rootView.findViewById(R.id.empty_textview);
         m_dealsList = new ArrayList<>();
-        m_dealsList = createDealsList(50);
-        DealAdapter dealAdapter = new DealAdapter(m_dealsList);
-        m_dealsRecyclerView.setAdapter(dealAdapter);
+        m_dealsList = createDealsList(10);
+        m_dealAdapter = new DealAdapter(m_dealsList, m_dealsRecyclerView);
+        m_dealsRecyclerView.setAdapter(m_dealAdapter);
 
 
         if (m_dealsList.isEmpty()) {
@@ -80,6 +81,38 @@ public class MainActivityFragment extends Fragment {
             m_dealsRecyclerView.setVisibility(View.VISIBLE);
             m_emptyTextView.setVisibility(View.GONE);
         }
+
+        // implement load more for the adapter
+        m_handler = new Handler();
+
+        m_dealAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                //add null , so the adapter will check view_type and show progress bar at bottom
+                m_dealsList.add(null);
+                m_dealAdapter.notifyItemInserted(m_dealsList.size() - 1);
+
+                m_handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //   remove progress item
+                        m_dealsList.remove(m_dealsList.size() - 1);
+                        m_dealAdapter.notifyItemRemoved(m_dealsList.size());
+                        //add items one by one
+                        int start = m_dealsList.size();
+                        int end = start + 10;
+
+                        for (int i = start + 1; i <= end; i++) {
+                            m_dealsList.addAll(createDealsList(1));
+                            m_dealAdapter.notifyItemInserted(m_dealsList.size());
+                        }
+                        m_dealAdapter.setLoaded();
+                        //or you can add all at once but do not forget to call mAdapter.notifyDataSetChanged();
+                    }
+                }, 2000);
+
+            }
+        });
 
 
         return rootView;
