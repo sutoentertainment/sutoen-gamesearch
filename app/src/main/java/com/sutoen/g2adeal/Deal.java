@@ -10,6 +10,8 @@ public class Deal {
     private float m_price;
     private String m_priceUnit;
 
+    public Deal() {}
+
     public Deal(int picSource, int icFavSource, String title, float price, String priceUnit, String buyButtonText) {
         m_picSource = picSource;
         m_icFavSource = icFavSource;
