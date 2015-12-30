@@ -20,7 +20,7 @@ public class MainActivityFragment extends Fragment {
 
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     private RecyclerView m_dealsRecyclerView;
-    private LinearLayoutManager m_LinearLayoutManager;
+    private LinearLayoutManager m_linearLayoutManager;
 
     /** The CardView widget. */
     //@VisibleForTesting
@@ -53,9 +53,9 @@ public class MainActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         m_dealsRecyclerView = (RecyclerView) rootView.findViewById(R.id.deals_recycler_view);
         m_dealsRecyclerView.setHasFixedSize(true);
-        m_LinearLayoutManager = new LinearLayoutManager(getContext());
-        m_LinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        m_dealsRecyclerView.setLayoutManager(m_LinearLayoutManager);
+        m_linearLayoutManager = new LinearLayoutManager(getContext());
+        m_linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        m_dealsRecyclerView.setLayoutManager(m_linearLayoutManager);
         DealAdapter dealAdapter = new DealAdapter(createDealsList(30));
         m_dealsRecyclerView.setAdapter(dealAdapter);
         return rootView;

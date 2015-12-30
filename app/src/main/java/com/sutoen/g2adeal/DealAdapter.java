@@ -15,26 +15,26 @@ import java.util.List;
  */
 public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder> {
 
-    private List<Deal> m_DealsList;
+    private List<Deal> m_dealsList;
 
     public DealAdapter(List<Deal> dealsList) {
-        m_DealsList = dealsList;
+        m_dealsList = dealsList;
     }
 
     @Override
     public int getItemCount() {
-        return m_DealsList.size();
+        return m_dealsList.size();
     }
 
     @Override
     public DealViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View singleDealView = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_deal, parent, false);
+        View singleDealView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_single_deal, parent, false);
         return new DealViewHolder(singleDealView);
     }
 
     @Override
     public void onBindViewHolder(DealViewHolder holder, int position) {
-        Deal currentDeal = m_DealsList.get(position);
+        Deal currentDeal = m_dealsList.get(position);
         holder.dealPic.setImageResource(currentDeal.getPicSource());
         holder.icFav.setImageResource(currentDeal.getIcFavSource());
         holder.title.setText(currentDeal.getTitle());
