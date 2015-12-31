@@ -68,7 +68,6 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.i("ducanh", "onCreate");
         super.onCreate(savedInstanceState);
         m_newLoadedList = new ArrayList<>();
         m_fetchDealsTask = new FetchDealsTask();
@@ -78,7 +77,6 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i("ducanh", "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         m_dealsRecyclerView = (RecyclerView) rootView.findViewById(R.id.deals_recycler_view);
         m_dealsRecyclerView.setHasFixedSize(true);
@@ -90,7 +88,14 @@ public class MainActivityFragment extends Fragment {
 
         // Load a place holder before loading in order for app look more responsive
         for (int i = 0; i < NUM_OF_ITEMS_IN_SINGLE_LOAD; ++i) {
-            m_dealsList.add(new Deal(Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888), android.R.drawable.btn_star_big_on, "added", 1, "eur", "buy", "/slug"));
+            m_dealsList.add(new Deal(
+                    Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888),
+                    android.R.drawable.btn_star_big_on,
+                    getString(R.string.loading),
+                    1,
+                    getString(R.string.loading),
+                    getString(R.string.buy_button_text),
+                    ""));
         }
 
         m_dealsList.addAll(m_newLoadedList);
@@ -102,7 +107,6 @@ public class MainActivityFragment extends Fragment {
         m_dealAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                Log.i("ducanhView", "handler");
                 //add null , so the adapter will check view_type and show progress bar at bottom
                 m_dealsList.add(null);
                 m_dealAdapter.notifyItemInserted(m_dealsList.size() - 1);
@@ -119,12 +123,7 @@ public class MainActivityFragment extends Fragment {
 
                         m_fetchDealsTask = new FetchDealsTask();
                         m_fetchDealsTask.execute(Integer.toString(start+1), Integer.toString(NUM_OF_ITEMS_IN_SINGLE_LOAD));
-//
-//                        for (int i = start +1; i <= end; ++i) {
-//                            Log.i("ducanhView", "add deal");
-//                            m_dealsList.add(new Deal("", android.R.drawable.btn_star_big_on, "added", 1, "eur", "buy", "/slug"));
-//                            m_dealAdapter.notifyItemInserted(m_dealsList.size());
-//                        }
+
                         m_dealsList.addAll(m_newLoadedList);
                         m_dealAdapter.notifyDataSetChanged();
                         m_dealAdapter.setLoaded();
@@ -148,7 +147,6 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onStart() {
-        Log.i("ducanh", "onstart");
         super.onStart();
     }
 
@@ -193,7 +191,6 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected List<Deal> doInBackground(String... params) {
 
-            Log.i("ducanh", "do in background");
             isStartAtBegin = Integer.parseInt(params[0]);
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -268,7 +265,6 @@ public class MainActivityFragment extends Fragment {
 
             if(deals != null){
                 if(isStartAtBegin == 0) {
-                    Log.i("ducanh", "m_newLoadedList == null");
                     m_dealsList.clear();
                     m_dealsList.addAll(deals);
                 } else {
@@ -299,11 +295,9 @@ public class MainActivityFragment extends Fragment {
                 return bitmap;
             }
         } catch (Exception e) {
-            Log.d("URLCONNECTIONERROR", e.toString());
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
-            Log.w("ImageDownloader", "Error downloading image from " + url);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();

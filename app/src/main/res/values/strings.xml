@@ -3,4 +3,6 @@
     <string name="action_settings">Settings</string>
     <string name="buy_button_text">Buy Now</string>
     <string name="no_records">No Records</string>
+    <string name="title_activity_buy_now">BuyNowActivity</string>
+    <string name="loading">loading</string>
 </resources>

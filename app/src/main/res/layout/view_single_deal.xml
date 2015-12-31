@@ -17,35 +17,37 @@
         <ImageView
             android:id="@+id/deal_picture_imageview"
             android:layout_width="0dp"
-            android:layout_height="@dimen/button_height_tall"
+            android:layout_height="@dimen/button_height_very_tall"
             android:layout_weight="20"
             android:src="@android:drawable/sym_def_app_icon"/>
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/button_height_very_tall"
             android:layout_weight="45"
+            android:gravity="center_vertical"
             android:weightSum="100">
 
             <TextView
                 android:id="@+id/deal_title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_normal"/>
+                android:textSize="@dimen/font_small"/>
 
             <TextView
                 android:id="@+id/deal_price_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:textSize="@dimen/font_small"/>
+                android:gravity="bottom"
+                android:textSize="@dimen/font_small"
+                android:textStyle="bold|italic"/>
 
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="@dimen/button_height_tall"
+            android:layout_height="@dimen/button_height_very_tall"
             android:layout_weight="35">
 
             <ImageView
@@ -55,7 +57,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
-                android:src="@android:drawable/ic_dialog_email"/>
+                android:visibility="invisible"/>
 
             <Button
                 android:id="@+id/deal_buy_button"

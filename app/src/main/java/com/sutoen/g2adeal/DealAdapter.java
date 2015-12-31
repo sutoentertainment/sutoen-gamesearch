@@ -1,5 +1,7 @@
 package com.sutoen.g2adeal;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,10 +21,11 @@ public class DealAdapter extends RecyclerView.Adapter {
 
     private final int VIEW_ITEM = 1;
     private final int VIEW_PROG = 0;
+    private final String G2A_HOME_URL = "https://www.g2a.com";
 
     // The minimum amount of items to have below your current scroll position
     // before loading more.
-    private int visibleThreshold = 10;
+    private int visibleThreshold = 8;
     private int lastVisibleItem;
     private int totalItemCount;
     private boolean m_loading;
@@ -94,14 +97,26 @@ public class DealAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof DealViewHolder) {
-            Deal currentDeal = m_dealsList.get(position);
+            final Deal currentDeal = m_dealsList.get(position);
             ((DealViewHolder) holder).dealPic.setImageBitmap(currentDeal.getPicSource());
             ((DealViewHolder) holder).icFav.setImageResource(currentDeal.getIcFavSource());
             ((DealViewHolder) holder).title.setText(currentDeal.getTitle());
             ((DealViewHolder) holder).price.setText(currentDeal.getPrice() + " " + currentDeal.getPriceUnit());
             ((DealViewHolder) holder).button.setText(currentDeal.getBuyButtonText());
+            ((DealViewHolder) holder).button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String toVisitUrl = G2A_HOME_URL + currentDeal.getSlug();
+//                    Intent goToItemPageIntent = new Intent(v.getContext(), BuyNowActivity.class);
+//                    goToItemPageIntent.putExtra(Intent.EXTRA_TEXT, toVisitUrl);
+//                    v.getContext().startActivity(goToItemPageIntent);
+//                    Log.i("ducanh", G2A_HOME_URL + currentDeal.getSlug());
+                    Intent goToItemPageIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(toVisitUrl));
+                    v.getContext().startActivity(goToItemPageIntent);
+                }
+            });
         } else {
             ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
         }
