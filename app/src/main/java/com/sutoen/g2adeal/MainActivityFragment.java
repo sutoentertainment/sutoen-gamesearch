@@ -1,5 +1,7 @@
 package com.sutoen.g2adeal;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -88,14 +90,9 @@ public class MainActivityFragment extends Fragment {
 
         // Load a place holder before loading in order for app look more responsive
         for (int i = 0; i < NUM_OF_ITEMS_IN_SINGLE_LOAD; ++i) {
-            m_dealsList.add(new Deal("", android.R.drawable.btn_star_big_on, "added", 1, "eur", "buy", "/slug"));
+            m_dealsList.add(new Deal(Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888), android.R.drawable.btn_star_big_on, "added", 1, "eur", "buy", "/slug"));
         }
 
-//        m_dealsList.add(new Deal("", android.R.drawable.btn_star_big_on, "added", 1, "eur", "buy", "/slug"));
-//        m_dealsList.add(new Deal("", android.R.drawable.btn_star_big_on, "added", 1, "eur", "buy", "/slug"));
-//        m_dealsList.add(new Deal("", android.R.drawable.btn_star_big_on, "added", 1, "eur", "buy", "/slug"));
-//        m_dealsList.add(new Deal("", android.R.drawable.btn_star_big_on, "added", 1, "eur", "buy", "/slug"));
-//        m_dealsList.add(new Deal("", android.R.drawable.btn_star_big_on, "added", 1, "eur", "buy", "/slug"));
         m_dealsList.addAll(m_newLoadedList);
         m_dealAdapter = new DealAdapter(m_dealsList, m_dealsRecyclerView);
         m_dealsRecyclerView.setAdapter(m_dealAdapter);
@@ -183,7 +180,8 @@ public class MainActivityFragment extends Fragment {
                 currentDeal.setPrice(price);
                 currentDeal.setTitle(title);
                 currentDeal.setSlug(slug);
-                currentDeal.setPicSource(picSrc);
+                Bitmap picSrcBitmap =  downloadBitmap(picSrc);
+                currentDeal.setPicSource(picSrcBitmap);
                 currentDeal.setIcFavSource(android.R.drawable.btn_star);
                 currentDeal.setBuyButtonText(getString(R.string.buy_button_text));
                 currentDeal.setPriceUnit("€");
@@ -281,5 +279,37 @@ public class MainActivityFragment extends Fragment {
 
             }
         }
+    }
+
+    private Bitmap downloadBitmap(String url) {
+        HttpURLConnection urlConnection = null;
+        try {
+            URL uri = new URL(url);
+            urlConnection = (HttpURLConnection) uri.openConnection();
+
+            int statusCode = urlConnection.getResponseCode();
+            if (statusCode != 200) {
+                return null;
+            }
+
+            InputStream inputStream = urlConnection.getInputStream();
+            if (inputStream != null) {
+
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                return bitmap;
+            }
+        } catch (Exception e) {
+            Log.d("URLCONNECTIONERROR", e.toString());
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            Log.w("ImageDownloader", "Error downloading image from " + url);
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+
+            }
+        }
+        return null;
     }
 }

@@ -1,6 +1,5 @@
 package com.sutoen.g2adeal;
 
-import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -98,7 +97,7 @@ public class DealAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof DealViewHolder) {
             Deal currentDeal = m_dealsList.get(position);
-            ((DealViewHolder) holder).dealPic.setImageURI(Uri.parse(currentDeal.getPicSource()));
+            ((DealViewHolder) holder).dealPic.setImageBitmap(currentDeal.getPicSource());
             ((DealViewHolder) holder).icFav.setImageResource(currentDeal.getIcFavSource());
             ((DealViewHolder) holder).title.setText(currentDeal.getTitle());
             ((DealViewHolder) holder).price.setText(currentDeal.getPrice() + " " + currentDeal.getPriceUnit());
@@ -108,7 +107,6 @@ public class DealAdapter extends RecyclerView.Adapter {
         }
 
     }
-
 
     public void setLoaded() {
         m_loading = false;

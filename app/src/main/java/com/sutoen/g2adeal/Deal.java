@@ -1,10 +1,12 @@
 package com.sutoen.g2adeal;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by SutoNinka on 27/12/15.
  */
 public class Deal {
-    private String m_picSource;
+    private Bitmap m_picSource;
     private int m_icFavSource;
     private String m_title;
     private float m_price;
@@ -13,7 +15,7 @@ public class Deal {
 
     public Deal() {}
 
-    public Deal(String picSource, int icFavSource, String title, float price, String priceUnit, String buyButtonText,
+    public Deal(Bitmap picSource, int icFavSource, String title, float price, String priceUnit, String buyButtonText,
                 String slug) {
         m_picSource = picSource;
         m_icFavSource = icFavSource;
@@ -34,11 +36,11 @@ public class Deal {
 
     private String m_buyButtonText;
 
-    public String getPicSource() {
+    public Bitmap getPicSource() {
         return m_picSource;
     }
 
-    public void setPicSource(String picSource) {
+    public void setPicSource(Bitmap picSource) {
         m_picSource = picSource;
     }
 
