@@ -1,5 +1,6 @@
 package com.sutoen.g2adeal;
 
+import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +23,7 @@ public class DealAdapter extends RecyclerView.Adapter {
 
     // The minimum amount of items to have below your current scroll position
     // before loading more.
-    private int visibleThreshold = 5;
+    private int visibleThreshold = 10;
     private int lastVisibleItem;
     private int totalItemCount;
     private boolean m_loading;
@@ -97,7 +98,7 @@ public class DealAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof DealViewHolder) {
             Deal currentDeal = m_dealsList.get(position);
-            ((DealViewHolder) holder).dealPic.setImageResource(currentDeal.getPicSource());
+            ((DealViewHolder) holder).dealPic.setImageURI(Uri.parse(currentDeal.getPicSource()));
             ((DealViewHolder) holder).icFav.setImageResource(currentDeal.getIcFavSource());
             ((DealViewHolder) holder).title.setText(currentDeal.getTitle());
             ((DealViewHolder) holder).price.setText(currentDeal.getPrice() + " " + currentDeal.getPriceUnit());
@@ -127,7 +128,6 @@ public class DealAdapter extends RecyclerView.Adapter {
 
         public DealViewHolder(View singleDeal) {
             super(singleDeal);
-
             dealPic = (ImageView) singleDeal.findViewById(R.id.deal_picture_imageview);
             icFav = (ImageView) singleDeal.findViewById(R.id.deal_favourite_imageview);
             title = (TextView) singleDeal.findViewById(R.id.deal_title_textView);
