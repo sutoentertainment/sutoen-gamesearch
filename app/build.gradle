@@ -15,9 +15,9 @@ android {
     signingConfigs {
         release {
             try {
-                storeFile file("myapp.keystore")
+                storeFile file("g2adeal.keystore")
                 storePassword KEYSTORE_PASSWORD
-                keyAlias "thekey"
+                keyAlias "g2adeal"
                 keyPassword KEY_PASSWORD
             }
             catch (ex) {
