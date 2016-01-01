@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/spacing_tiny"
     android:paddingRight="@dimen/spacing_tiny"
     android:paddingTop="@dimen/spacing_normal"
-    tools:context="com.sutoen.g2adeal.MainActivityFragment"
+    tools:context="com.sutoen.sutogamesearch.MainActivityFragment"
     tools:showIn="@layout/activity_main">
 
     <android.support.v7.widget.RecyclerView

@@ -1,4 +1,4 @@
-package com.sutoen.g2adeal;
+package com.sutoen.sutogamesearch;
 
 import android.content.Intent;
 import android.os.Bundle;

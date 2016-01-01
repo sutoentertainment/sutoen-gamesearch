@@ -1,4 +1,4 @@
-package com.sutoen.g2adeal;
+package com.sutoen.sutogamesearch;
 
 /**
  * Created by SutoNinka on 27/12/15.

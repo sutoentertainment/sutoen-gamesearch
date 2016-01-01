@@ -1,4 +1,4 @@
-package com.sutoen.g2adeal;
+package com.sutoen.sutogamesearch;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

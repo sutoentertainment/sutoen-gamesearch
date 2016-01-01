@@ -1,4 +1,4 @@
-package com.sutoen.g2adeal;
+package com.sutoen.sutogamesearch;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
