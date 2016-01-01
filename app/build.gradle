@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.sutoen.g2adeal"
+        applicationId "com.sutoen.sutogamessearch"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
