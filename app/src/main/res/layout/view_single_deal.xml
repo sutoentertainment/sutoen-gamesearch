@@ -50,23 +50,14 @@
             android:layout_height="@dimen/button_height_very_tall"
             android:layout_weight="35">
 
-            <ImageView
-                android:id="@+id/deal_favourite_imageview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentBottom="true"
-                android:visibility="invisible"/>
-
             <Button
                 android:id="@+id/deal_buy_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@+id/deal_favourite_imageview"
-                android:layout_toEndOf="@+id/deal_favourite_imageview"
-                android:textSize="@dimen/font_small"/>
+                android:layout_alignParentRight="true"
+                android:textSize="@dimen/font_small"
+                android:text="@string/buy_button_text"/>
         </RelativeLayout>
 
     </LinearLayout>

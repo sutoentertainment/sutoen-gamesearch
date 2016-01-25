@@ -1,5 +1,6 @@
 package com.sutoen.sutogamesearch.views.adapters;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,15 +13,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.sutoen.sutogamesearch.interfaces.OnLoadMoreListener;
 import com.sutoen.sutogamesearch.R;
-import com.sutoen.sutogamesearch.models.Deal;
+import com.sutoen.sutogamesearch.models.DealModel;
 
 import java.util.List;
 
-/**
- * Created by SutoNinka on 27/12/15.
- */
+
 public class DealAdapter extends RecyclerView.Adapter {
 
     private final int VIEW_ITEM = 1;
@@ -29,16 +29,16 @@ public class DealAdapter extends RecyclerView.Adapter {
 
     // The minimum amount of items to have below your current scroll position
     // before loading more.
-    private int visibleThreshold = 8;
-    private int lastVisibleItem;
-    private int totalItemCount;
-    private boolean m_loading;
-    private OnLoadMoreListener m_onLoadMoreListener;
+    private final int VISIBLE_THRESHOLD = 8;
+    private int mLastVisibleItem;
+    private int mTotalItemCount;
+    private boolean mLoading;
+    private OnLoadMoreListener mOnLoadMoreListener;
 
-    private List<Deal> m_dealsList;
+    private List<DealModel> mDealsList;
 
-    public DealAdapter(List<Deal> dealsList, RecyclerView recyclerView) {
-        m_dealsList = dealsList;
+    public DealAdapter(List<DealModel> dealsList, RecyclerView recyclerView) {
+        mDealsList = dealsList;
 
         if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
 
@@ -53,17 +53,17 @@ public class DealAdapter extends RecyclerView.Adapter {
                                                int dx, int dy) {
                             super.onScrolled(recyclerView, dx, dy);
 
-                            totalItemCount = linearLayoutManager.getItemCount();
-                            lastVisibleItem = linearLayoutManager
+                            mTotalItemCount = linearLayoutManager.getItemCount();
+                            mLastVisibleItem = linearLayoutManager
                                     .findLastVisibleItemPosition();
-                            if (!m_loading
-                                    && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                            if (!mLoading
+                                    && mTotalItemCount <= (mLastVisibleItem + VISIBLE_THRESHOLD)) {
                                 // End has been reached
                                 // Do something
-                                if (m_onLoadMoreListener != null) {
-                                    m_onLoadMoreListener.onLoadMore();
+                                if (mOnLoadMoreListener != null) {
+                                    mOnLoadMoreListener.onLoadMore();
                                 }
-                                m_loading = true;
+                                mLoading = true;
                             }
                         }
                     });
@@ -72,12 +72,12 @@ public class DealAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return m_dealsList.size();
+        return mDealsList.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (m_dealsList.get(position) == null) {
+        if (mDealsList.get(position) == null) {
             return VIEW_PROG;
         }
         return VIEW_ITEM;
@@ -103,20 +103,24 @@ public class DealAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof DealViewHolder) {
-            final Deal currentDeal = m_dealsList.get(position);
-            ((DealViewHolder) holder).dealPic.setImageBitmap(currentDeal.getPicSource());
-            ((DealViewHolder) holder).icFav.setImageResource(currentDeal.getIcFavSource());
+            final DealModel currentDeal = mDealsList.get(position);
+
+            // Load the thumbnail into the place holder using Picasso
+            // if the thumbnail is not loaded using the place holder which is this app's logo
+            Context dealThumbnailContext = ((DealViewHolder) holder).dealPic.getContext();
+            String thumbnailUrl = currentDeal.getThumbnail();
+            Picasso.with(dealThumbnailContext)
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.logo)
+                    .resize(50, 50)
+                    .centerCrop()
+                    .into(((DealViewHolder) holder).dealPic);
             ((DealViewHolder) holder).title.setText(currentDeal.getTitle());
             ((DealViewHolder) holder).price.setText(currentDeal.getPrice() + " " + currentDeal.getPriceUnit());
-            ((DealViewHolder) holder).button.setText(currentDeal.getBuyButtonText());
             ((DealViewHolder) holder).button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String toVisitUrl = G2A_HOME_URL + currentDeal.getSlug();
-//                    Intent goToItemPageIntent = new Intent(v.getContext(), BuyNowActivity.class);
-//                    goToItemPageIntent.putExtra(Intent.EXTRA_TEXT, toVisitUrl);
-//                    v.getContext().startActivity(goToItemPageIntent);
-//                    Log.i("ducanh", G2A_HOME_URL + currentDeal.getSlug());
                     Intent goToItemPageIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(toVisitUrl));
                     v.getContext().startActivity(goToItemPageIntent);
                 }
@@ -128,17 +132,16 @@ public class DealAdapter extends RecyclerView.Adapter {
     }
 
     public void setLoaded() {
-        m_loading = false;
+        mLoading = false;
     }
 
     public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
-        m_onLoadMoreListener = onLoadMoreListener;
+        mOnLoadMoreListener = onLoadMoreListener;
     }
 
     static class DealViewHolder extends RecyclerView.ViewHolder {
 
         ImageView dealPic;
-        ImageView icFav;
         TextView title;
         TextView price;
         Button button;
@@ -146,7 +149,6 @@ public class DealAdapter extends RecyclerView.Adapter {
         public DealViewHolder(View singleDeal) {
             super(singleDeal);
             dealPic = (ImageView) singleDeal.findViewById(R.id.deal_picture_imageview);
-            icFav = (ImageView) singleDeal.findViewById(R.id.deal_favourite_imageview);
             title = (TextView) singleDeal.findViewById(R.id.deal_title_textView);
             price = (TextView) singleDeal.findViewById(R.id.deal_price_textView);
             button = (Button) singleDeal.findViewById(R.id.deal_buy_button);

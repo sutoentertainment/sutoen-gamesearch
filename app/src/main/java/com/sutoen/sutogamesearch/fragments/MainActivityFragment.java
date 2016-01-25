@@ -1,8 +1,5 @@
 package com.sutoen.sutogamesearch.fragments;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,57 +13,43 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.sutoen.sutogamesearch.models.Deal;
+import com.sutoen.sutogamesearch.models.DealModel;
+import com.sutoen.sutogamesearch.models.G2AQuickSearchModel;
+import com.sutoen.sutogamesearch.network.ApiConstants;
+import com.sutoen.sutogamesearch.network.G2AService;
 import com.sutoen.sutogamesearch.views.adapters.DealAdapter;
 import com.sutoen.sutogamesearch.interfaces.OnLoadMoreListener;
 import com.sutoen.sutogamesearch.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import retrofit2.GsonConverterFactory;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 /**
- * A placeholder fragment containing a simple view.
+ * A main fragment to show quick search results in CardViews contained in RecyclerView
  */
 public class MainActivityFragment extends Fragment {
 
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
-    private RecyclerView m_dealsRecyclerView;
-    private DealAdapter m_dealAdapter;
-    private LinearLayoutManager m_linearLayoutManager;
-    private TextView m_emptyTextView;
+    private RecyclerView mDealsRecyclerView;
+    private DealAdapter mDealAdapter;
+    private LinearLayoutManager mLinearLayoutManager;
+    private FetchDealsTask mFetchDealsTask;
+    private Retrofit mRetrofit;
+    private G2AService mG2AService;
 
-
-    private FetchDealsTask m_fetchDealsTask;
+    protected Handler handler;
 
     private final int NUM_OF_ITEMS_IN_SINGLE_LOAD = 10;
 
-    private List<Deal> m_dealsList;
-    private List<Deal> m_newLoadedList;
-
-    protected Handler m_handler;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment NotificationFragment.
-     */
-    public static MainActivityFragment newInstance() {
-        MainActivityFragment fragment = new MainActivityFragment();
-        fragment.setRetainInstance(true);
-        return fragment;
-    }
+    private List<DealModel> mDealsList;
+    private List<DealModel> mNewLoadedList;
 
     public MainActivityFragment() {
     }
@@ -74,78 +57,65 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        m_newLoadedList = new ArrayList<>();
-        m_fetchDealsTask = new FetchDealsTask();
-        m_fetchDealsTask.execute(Integer.toString(0), Integer.toString(NUM_OF_ITEMS_IN_SINGLE_LOAD));
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl(ApiConstants.G2A_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        mG2AService = mRetrofit.create(G2AService.class);
+        mNewLoadedList = new ArrayList<>();
+        mFetchDealsTask = new FetchDealsTask();
+        mFetchDealsTask.execute(Integer.toString(0), Integer.toString(NUM_OF_ITEMS_IN_SINGLE_LOAD));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        m_dealsRecyclerView = (RecyclerView) rootView.findViewById(R.id.deals_recycler_view);
-        m_dealsRecyclerView.setHasFixedSize(true);
-        m_linearLayoutManager = new LinearLayoutManager(getContext());
-        m_linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        m_dealsRecyclerView.setLayoutManager(m_linearLayoutManager);
-        m_emptyTextView = (TextView) rootView.findViewById(R.id.empty_textview);
-        m_dealsList = new ArrayList<>();
+        mDealsRecyclerView = (RecyclerView) rootView.findViewById(R.id.deals_recycler_view);
+        mDealsRecyclerView.setHasFixedSize(true);
+        mLinearLayoutManager = new LinearLayoutManager(getContext());
+        mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mDealsRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mDealsList = new ArrayList<>();
 
-        // Load a place holder before loading in order for app look more responsive
+        // Load place holders deal before loading in order for app look more responsive
         for (int i = 0; i < NUM_OF_ITEMS_IN_SINGLE_LOAD; ++i) {
-            m_dealsList.add(new Deal(
-                    Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888),
-                    android.R.drawable.btn_star_big_on,
-                    getString(R.string.loading),
-                    1,
-                    getString(R.string.loading),
-                    getString(R.string.buy_button_text),
-                    ""));
+            mDealsList.add(new DealModel());
         }
 
-        m_dealsList.addAll(m_newLoadedList);
-        m_dealAdapter = new DealAdapter(m_dealsList, m_dealsRecyclerView);
-        m_dealsRecyclerView.setAdapter(m_dealAdapter);
+        mDealsList.addAll(mNewLoadedList);
+        mDealAdapter = new DealAdapter(mDealsList, mDealsRecyclerView);
+        mDealsRecyclerView.setAdapter(mDealAdapter);
 
-        m_handler = new Handler();
+        handler = new Handler();
 
-        m_dealAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+        mDealAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
                 //add null , so the adapter will check view_type and show progress bar at bottom
-                m_dealsList.add(null);
-                m_dealAdapter.notifyItemInserted(m_dealsList.size() - 1);
+                mDealsList.add(null);
+                mDealAdapter.notifyItemInserted(mDealsList.size() - 1);
 
-                m_handler.postDelayed(new Runnable() {
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         //   remove progress item
-                        m_dealsList.remove(m_dealsList.size() - 1);
-                        m_dealAdapter.notifyItemRemoved(m_dealsList.size());
-                        //add items one by one
-                        int start = m_dealsList.size();
-                        int end = start + NUM_OF_ITEMS_IN_SINGLE_LOAD;
+                        mDealsList.remove(mDealsList.size() - 1);
+                        mDealAdapter.notifyItemRemoved(mDealsList.size());
 
-                        m_fetchDealsTask = new FetchDealsTask();
-                        m_fetchDealsTask.execute(Integer.toString(start+1), Integer.toString(NUM_OF_ITEMS_IN_SINGLE_LOAD));
+                        // Add new items to the list
+                        int start = mDealsList.size();
+                        mFetchDealsTask = new FetchDealsTask();
+                        mFetchDealsTask.execute(Integer.toString(start+1), Integer.toString(NUM_OF_ITEMS_IN_SINGLE_LOAD));
 
-                        m_dealsList.addAll(m_newLoadedList);
-                        m_dealAdapter.notifyDataSetChanged();
-                        m_dealAdapter.setLoaded();
+                        mDealsList.addAll(mNewLoadedList);
+                        mDealAdapter.notifyDataSetChanged();
+                        mDealAdapter.setLoaded();
                     }
                 }, 2000);
 
             }
         });
-
-
-        if (m_dealsList.isEmpty()) {
-            m_dealsRecyclerView.setVisibility(View.GONE);
-            m_emptyTextView.setVisibility(View.VISIBLE);
-        } else {
-            m_dealsRecyclerView.setVisibility(View.VISIBLE);
-            m_emptyTextView.setVisibility(View.GONE);
-        }
 
         return rootView;
     }
@@ -155,160 +125,53 @@ public class MainActivityFragment extends Fragment {
         super.onStart();
     }
 
-    public class FetchDealsTask extends AsyncTask<String, Void, List<Deal>> {
+    /**
+     * This class is executed in background in order to load deals getting from the server
+     * using Retrofit2 synchronous call, alternatively, we can use Retrofit2 asynchronous
+     */
+    public class FetchDealsTask extends AsyncTask<String, Void, List<DealModel>> {
 
         private int isStartAtBegin;
 
-        private List<Deal> getDealsDataFromJson(String dealJsonString)
-                throws JSONException {
-            // These are the names of the JSON objects that need to be extracted.
-            final String KEY_DOCS = "docs";
-            final String KEY_NAME = "name";
-            final String KEY_SLUG = "slug";
-            final String KEY_MIN_PRICE = "minPrice";
-            final String KEY_THUMBNAIL = "thumbnail";
+        @Override
+        protected List<DealModel> doInBackground(String... params) {
+            isStartAtBegin = Integer.parseInt(params[0]);
 
-            JSONObject dealJson = new JSONObject(dealJsonString);
-            JSONArray dealsArray = dealJson.getJSONArray(KEY_DOCS);
-
-            List<Deal> results = new ArrayList<>();
-
-            for (int i = 0; i < dealsArray.length(); i++) {
-                float price = (float) dealsArray.getJSONObject(i).getDouble(KEY_MIN_PRICE);
-                String title = dealsArray.getJSONObject(i).getString(KEY_NAME);
-                String slug = dealsArray.getJSONObject(i).getString(KEY_SLUG);
-                String picSrc = dealsArray.getJSONObject(i).getString(KEY_THUMBNAIL);;
-
-                Deal currentDeal = new Deal();
-                currentDeal.setPrice(price);
-                currentDeal.setTitle(title);
-                currentDeal.setSlug(slug);
-                Bitmap picSrcBitmap =  downloadBitmap(picSrc);
-                currentDeal.setPicSource(picSrcBitmap);
-                currentDeal.setIcFavSource(android.R.drawable.btn_star);
-                currentDeal.setBuyButtonText(getString(R.string.buy_button_text));
-                currentDeal.setPriceUnit("€");
-                results.add(currentDeal);
+            // Getting results from the server by using synchronous call of Retrofit2 client
+            List<DealModel> results = new ArrayList<>();
+            try {
+                Response<G2AQuickSearchModel> response = (mG2AService.getDeals()).execute();
+                if (response.code() == 200) {
+                    List<DealModel> docModels = Arrays.asList(response.body().getDeals());
+                    for(DealModel deal : docModels) {
+                        deal.setPriceUnit("€");
+                    }
+                    results.addAll(docModels);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(LOG_TAG, e.getLocalizedMessage());
             }
             return results;
         }
 
         @Override
-        protected List<Deal> doInBackground(String... params) {
-
-            isStartAtBegin = Integer.parseInt(params[0]);
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            // Will contain the raw JSON response as a string.
-            String forecastJsonStr = null;
-
-            try {
-                // Construct the URL for the G2A query
-                final String DEAL_QUICK_SEARCH_URL = "https://www.g2a.com/lucene/search/quick";
-                final String START_PARAM = "start";
-                final String ROWS_PARAM = "rows";
-
-                Uri uri = Uri.parse(DEAL_QUICK_SEARCH_URL).buildUpon()
-                        .appendQueryParameter(START_PARAM, params[0])
-                        .appendQueryParameter(ROWS_PARAM, params[1])
-                        .build();
-
-                URL url = new URL(uri.toString());
-                // Create the request to G2A, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                forecastJsonStr = buffer.toString();
-            } catch (Exception e) {
-                Log.d(LOG_TAG, e.getLocalizedMessage());
-                return null;
-            } finally{
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-            try {
-                return getDealsDataFromJson(forecastJsonStr);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(final List<Deal> deals) {
+        protected void onPostExecute(final List<DealModel> deals) {
             super.onPostExecute(deals);
 
+            // if the deals first load add all deals to the list
+            // otherwise add all new deals loaded to mNewLoadedList in order to use for load more
             if(deals != null){
                 if(isStartAtBegin == 0) {
-                    m_dealsList.clear();
-                    m_dealsList.addAll(deals);
+                    mDealsList.clear();
+                    mDealsList.addAll(deals);
                 } else {
-                    m_newLoadedList = null;
-                    m_newLoadedList = new ArrayList<>();
-                    m_newLoadedList.addAll(deals);
+                    mNewLoadedList = null;
+                    mNewLoadedList = new ArrayList<>();
+                    mNewLoadedList.addAll(deals);
                 }
 
             }
         }
-    }
-
-    private Bitmap downloadBitmap(String url) {
-        HttpURLConnection urlConnection = null;
-        try {
-            URL uri = new URL(url);
-            urlConnection = (HttpURLConnection) uri.openConnection();
-
-            int statusCode = urlConnection.getResponseCode();
-            if (statusCode != 200) {
-                return null;
-            }
-
-            InputStream inputStream = urlConnection.getInputStream();
-            if (inputStream != null) {
-
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                return bitmap;
-            }
-        } catch (Exception e) {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-
-            }
-        }
-        return null;
     }
 }
