@@ -1,4 +1,4 @@
-package com.sutoen.sutogamesearch;
+package com.sutoen.sutogamesearch.views.adapters;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,6 +11,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.sutoen.sutogamesearch.interfaces.OnLoadMoreListener;
+import com.sutoen.sutogamesearch.R;
+import com.sutoen.sutogamesearch.models.Deal;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.sutoen.sutogamesearch;
+package com.sutoen.sutogamesearch.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+
+import com.sutoen.sutogamesearch.R;
 
 /**
  * A placeholder fragment containing a simple view.

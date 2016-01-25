@@ -1,4 +1,4 @@
-package com.sutoen.sutogamesearch;
+package com.sutoen.sutogamesearch.interfaces;
 
 /**
  * Created by SutoNinka on 27/12/15.

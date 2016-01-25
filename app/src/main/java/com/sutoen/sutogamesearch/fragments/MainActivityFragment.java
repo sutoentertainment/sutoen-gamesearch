@@ -1,4 +1,4 @@
-package com.sutoen.sutogamesearch;
+package com.sutoen.sutogamesearch.fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.sutoen.sutogamesearch.models.Deal;
+import com.sutoen.sutogamesearch.views.adapters.DealAdapter;
+import com.sutoen.sutogamesearch.interfaces.OnLoadMoreListener;
+import com.sutoen.sutogamesearch.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

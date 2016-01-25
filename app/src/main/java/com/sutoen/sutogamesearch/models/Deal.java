@@ -1,4 +1,4 @@
-package com.sutoen.sutogamesearch;
+package com.sutoen.sutogamesearch.models;
 
 import android.graphics.Bitmap;
 
