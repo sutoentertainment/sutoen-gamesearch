@@ -11,11 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.sutoen.sutogamesearch.injector.components.DaggerNetworkComponent;
+import com.sutoen.sutogamesearch.injector.modules.NetworkModule;
 import com.sutoen.sutogamesearch.models.DealModel;
 import com.sutoen.sutogamesearch.models.G2AQuickSearchModel;
-import com.sutoen.sutogamesearch.network.ApiConstants;
 import com.sutoen.sutogamesearch.network.G2AService;
 import com.sutoen.sutogamesearch.views.adapters.DealAdapter;
 import com.sutoen.sutogamesearch.interfaces.OnLoadMoreListener;
@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import retrofit2.GsonConverterFactory;
+import javax.inject.Inject;
+
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
@@ -37,11 +38,13 @@ public class MainActivityFragment extends Fragment {
 
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
+    @Inject
+    Retrofit mRetrofit;
+
     private RecyclerView mDealsRecyclerView;
     private DealAdapter mDealAdapter;
     private LinearLayoutManager mLinearLayoutManager;
     private FetchDealsTask mFetchDealsTask;
-    private Retrofit mRetrofit;
     private G2AService mG2AService;
 
     protected Handler handler;
@@ -51,16 +54,15 @@ public class MainActivityFragment extends Fragment {
     private List<DealModel> mDealsList;
     private List<DealModel> mNewLoadedList;
 
-    public MainActivityFragment() {
-    }
+    public MainActivityFragment() {}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRetrofit = new Retrofit.Builder()
-                .baseUrl(ApiConstants.G2A_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+
+        // Inject dependencies of this fragment
+        DaggerNetworkComponent.create().inject(this);
+
         mG2AService = mRetrofit.create(G2AService.class);
         mNewLoadedList = new ArrayList<>();
         mFetchDealsTask = new FetchDealsTask();
