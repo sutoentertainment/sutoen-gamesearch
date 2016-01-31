@@ -6,6 +6,12 @@ This is a third party application allows you to search for games that available 
 
 [This link][1] is for reaching the app in google play store
 
+## Build the project
+* Import project to Android Studio
+* Remove name `gradle.properties.example` to `gradle.properties`
+* Build to the device using Android studio build button
+ 
+
 ## Libraries used for this project
 * [Retrofit] [2]
 * [Picasso] [3]
