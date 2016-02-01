@@ -108,7 +108,7 @@ public class MainActivityFragment extends Fragment {
                         // Add new items to the list
                         int start = mDealsList.size();
                         mFetchDealsTask = new FetchDealsTask();
-                        mFetchDealsTask.execute(Integer.toString(start+1), Integer.toString(NUM_OF_ITEMS_IN_SINGLE_LOAD));
+                        mFetchDealsTask.execute(Integer.toString(start), Integer.toString(NUM_OF_ITEMS_IN_SINGLE_LOAD));
 
                         mDealsList.addAll(mNewLoadedList);
                         mDealAdapter.notifyDataSetChanged();
@@ -142,7 +142,7 @@ public class MainActivityFragment extends Fragment {
             // Getting results from the server by using synchronous call of Retrofit2 client
             List<DealModel> results = new ArrayList<>();
             try {
-                Response<G2AQuickSearchModel> response = (mG2AService.getDeals()).execute();
+                Response<G2AQuickSearchModel> response = (mG2AService.getDeals(params[0], params[1])).execute();
                 if (response.code() == 200) {
                     List<DealModel> docModels = Arrays.asList(response.body().getDeals());
                     for(DealModel deal : docModels) {
