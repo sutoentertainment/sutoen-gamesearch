@@ -1,8 +1,11 @@
-# Suto - Game Search 
+# Suto - Video Game Search Tool
 
-This is a third party application allows you to search for games that available in G2A website.
+This app will search on the internet websites such as g2a.com to help you reach your favourite games such as World of Warcraft, Need for Speed ...
 
-- Go and get your favourite games: World of Warcraft, Need for Speed ...
+
+## Change logs:
+v1.0.1: Improve code base quality
+v1.0: Including the games which can be browsed g2a.com website
 
 [This link][1] is for reaching the app in google play store
 
