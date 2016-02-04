@@ -4,8 +4,8 @@ This app will search on the internet websites such as g2a.com to help you reach 
 
 
 ## Change logs:
-v1.0.1: Improve code base quality
-v1.0: Including the games which can be browsed g2a.com website
+* v1.0.1: Improve code base quality
+* v1.0: Including the games which can be browsed g2a.com website
 
 [This link][1] is for reaching the app in google play store
 
