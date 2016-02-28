@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0-alpha9'
+        classpath 'com.android.tools.build:gradle:2.0.0-beta6'
 
         // This help on recognizing generated code by Dagger2 for Android Studio
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
