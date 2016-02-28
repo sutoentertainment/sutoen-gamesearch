@@ -1,14 +1,16 @@
 package com.sutoen.sutogamesearch.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.sutoen.sutogamesearch.R;
+import com.sutoen.sutogamesearch.event.MessageEvent;
 
-public class MainActivity extends AppCompatActivity {
+import org.greenrobot.eventbus.EventBus;
+
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,6 +18,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        EventBus.getDefault().post(new MessageEvent("Hello everyone!"));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override

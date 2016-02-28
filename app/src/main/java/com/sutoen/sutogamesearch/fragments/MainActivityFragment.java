@@ -7,19 +7,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.sutoen.sutogamesearch.R;
 import com.sutoen.sutogamesearch.injector.components.DaggerNetworkComponent;
-import com.sutoen.sutogamesearch.injector.modules.NetworkModule;
+import com.sutoen.sutogamesearch.interfaces.OnLoadMoreListener;
 import com.sutoen.sutogamesearch.models.DealModel;
 import com.sutoen.sutogamesearch.models.G2AQuickSearchModel;
 import com.sutoen.sutogamesearch.network.G2AService;
+import com.sutoen.sutogamesearch.util.LogUtils;
 import com.sutoen.sutogamesearch.views.adapters.DealAdapter;
-import com.sutoen.sutogamesearch.interfaces.OnLoadMoreListener;
-import com.sutoen.sutogamesearch.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,8 +34,6 @@ import retrofit2.Retrofit;
  * A main fragment to show quick search results in CardViews contained in RecyclerView
  */
 public class MainActivityFragment extends Fragment {
-
-    private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
     @Inject
     Retrofit mRetrofit;
@@ -62,11 +59,7 @@ public class MainActivityFragment extends Fragment {
 
         // Inject dependencies of this fragment
         DaggerNetworkComponent.create().inject(this);
-
-        mG2AService = mRetrofit.create(G2AService.class);
-        mNewLoadedList = new ArrayList<>();
-        mFetchDealsTask = new FetchDealsTask();
-        mFetchDealsTask.execute(Integer.toString(0), Integer.toString(NUM_OF_ITEMS_IN_SINGLE_LOAD));
+        setRetainInstance(true);
     }
 
     @Override
@@ -78,6 +71,10 @@ public class MainActivityFragment extends Fragment {
         mLinearLayoutManager = new LinearLayoutManager(getContext());
         mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mDealsRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mG2AService = mRetrofit.create(G2AService.class);
+        mNewLoadedList = new ArrayList<>();
+        mFetchDealsTask = new FetchDealsTask();
+        mFetchDealsTask.execute(Integer.toString(0), Integer.toString(NUM_OF_ITEMS_IN_SINGLE_LOAD));
         mDealsList = new ArrayList<>();
 
         // Load place holders deal before loading in order for app look more responsive
@@ -103,7 +100,6 @@ public class MainActivityFragment extends Fragment {
                     public void run() {
                         //   remove progress item
                         mDealsList.remove(mDealsList.size() - 1);
-                        mDealAdapter.notifyItemRemoved(mDealsList.size());
 
                         // Add new items to the list
                         int start = mDealsList.size();
@@ -125,6 +121,12 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     /**
@@ -152,7 +154,7 @@ public class MainActivityFragment extends Fragment {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.e(LOG_TAG, e.getLocalizedMessage());
+                LogUtils.error(e.getLocalizedMessage());
             }
             return results;
         }
