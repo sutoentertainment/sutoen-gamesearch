@@ -1,6 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <string name="app_name">Games Search</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Kiem game</string>
+    <string name="action_settings">Tuy chon</string>
     <string name="buy_button_text">Found</string>
     <string name="no_records">No Records</string>
     <string name="title_activity_buy_now">BuyNowActivity</string>
