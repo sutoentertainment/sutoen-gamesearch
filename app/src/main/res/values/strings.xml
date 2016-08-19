@@ -5,4 +5,5 @@
     <string name="no_records">No Records</string>
     <string name="title_activity_buy_now">BuyNowActivity</string>
     <string name="loading">loading</string>
+    <string name="no_translate" translatable="false">loading</string>
 </resources>
