@@ -1,4 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources><string name="app_name">don\'t know</string>
-    <string name="action_settings"></string>
+    <string name="action_settings">try cron job</string>
     </resources>
