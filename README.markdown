@@ -16,9 +16,9 @@ This app will search on the internet websites such as g2a.com to help you reach 
  
 
 ## Libraries used for this project
-* [Retrofit] [2]
-* [Picasso] [3]
-* [Dagger2] [4]
+* [Retrofit][2]
+* [Picasso][3]
+* [Dagger2][4]
 
 ## References:
 * https://github.com/futurice/android-best-practices
